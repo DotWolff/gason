@@ -70,19 +70,19 @@ static inline int char2int(char c) {
     return (c & ~' ') - 'A' + 10;
 }
 
-static double string2double(char *s, char **endptr) {
+static float string2float(char *s, char **endptr) {
     char ch = *s;
     if (ch == '-')
         ++s;
 
-    double result = 0;
+    float result = 0;
     while (isdigit(*s))
         result = (result * 10) + (*s++ - '0');
 
     if (*s == '.') {
         ++s;
 
-        double fraction = 1;
+        float fraction = 1;
         while (isdigit(*s)) {
             fraction *= 0.1;
             result += (*s++ - '0') * fraction;
@@ -92,7 +92,7 @@ static double string2double(char *s, char **endptr) {
     if (*s == 'e' || *s == 'E') {
         ++s;
 
-        double base = 10;
+        float base = 10;
         if (*s == '+')
             ++s;
         else if (*s == '-') {
@@ -104,7 +104,7 @@ static double string2double(char *s, char **endptr) {
         while (isdigit(*s))
             exponent = (exponent * 10) + (*s++ - '0');
 
-        double power = 1;
+        float power = 1;
         for (; exponent; exponent >>= 1, base *= base)
             if (exponent & 1)
                 power *= base;
@@ -165,7 +165,7 @@ int jsonParse(char *s, char **endptr, JsonValue *value, JsonAllocator &allocator
         case '7':
         case '8':
         case '9':
-            o = JsonValue(string2double(*endptr, &s));
+            o = JsonValue(string2float(*endptr, &s));
             if (!isdelim(*s)) {
                 *endptr = s;
                 return JSON_BAD_NUMBER;
